@@ -5,33 +5,29 @@
 #include <ESPAsyncWebServer.h>
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <Adafruit_I2CDevice.h>
 
-// Replace with your network credentials
-const char* ssid = "Proton";
-const char* password = "cuadra123";
+const char* ssid = "nice";      // replace your Wifi Username
+const char* password = "cuadra123";    // replace your wifi password
 
-#define DHTPIN 5     // Digital pin connected to the DHT sensor
-
-// Uncomment the type of sensor in use:
+#define DHTPIN D4         // DHT11 pin connected to nodemcu D4 pin
 #define DHTTYPE    DHT11     // DHT 11
-//#define DHTTYPE    DHT22     // DHT 22 (AM2302)
-//#define DHTTYPE    DHT21     // DHT 21 (AM2301)
-
 DHT dht(DHTPIN, DHTTYPE);
 
-// current temperature & humidity, updated in loop()
+#define SCREEN_WIDTH 128 
+#define SCREEN_HEIGHT 32 
+
+#define OLED_RESET     LED_BUILTIN 
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
 float t = 0.0;
 float h = 0.0;
 
-// Create AsyncWebServer object on port 80
-AsyncWebServer server(80);
-
-// Generally, you should use "unsigned long" for variables that hold time
-// The value will quickly become too large for an int to store
-unsigned long previousMillis = 0;    // will store last time DHT was updated
-
-// Updates DHT readings every 10 seconds
-const long interval = 10000;  
+AsyncWebServer server(80);      // Wifi Server
+unsigned long previousMillis = 0;   
+const long interval = 1000;  
 
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE HTML>
@@ -177,8 +173,6 @@ setInterval(function ( ) {
 </script>
 </body>
 </html>)rawliteral";
-
-// Replaces placeholder with DHT values
 String processor(const String& var){
   //Serial.println(var);
   if(var == "TEMPERATURE"){
@@ -191,22 +185,15 @@ String processor(const String& var){
 }
 
 void setup(){
-  // Serial port for debugging purposes
   Serial.begin(115200);
-  dht.begin();
-  
-  // Connect to Wi-Fi
+  dht.begin();              // Initializing DHT11 Sensor
   WiFi.begin(ssid, password);
   Serial.println("Connecting to WiFi");
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println(".");
   }
-
-  // Print ESP8266 Local IP Address
   Serial.println(WiFi.localIP());
-
-  // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/html", index_html, processor);
   });
@@ -216,37 +203,46 @@ void setup(){
   server.on("/humidity", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", String(h).c_str());
   });
+  server.begin();               // Initiz=alizing Wifi Server
 
-  // Start server
-  server.begin();
+ if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {   // Address of OLED Display
+ Serial.println(F("SSD1306 allocation failed"));
+ for(;;);
+ }
 }
+
  
 void loop(){  
   unsigned long currentMillis = millis();
   if (currentMillis - previousMillis >= interval) {
-    // save the last time you updated the DHT values
     previousMillis = currentMillis;
-    // Read temperature as Celsius (the default)
     float newT = dht.readTemperature();
-    // Read temperature as Fahrenheit (isFahrenheit = true)
-    //float newT = dht.readTemperature(true);
-    // if temperature read failed, don't change t value
     if (isnan(newT)) {
-      Serial.println("Failed to read from DHT sensor!");
+      Serial.println("Failed to read from DHT sensor!");   
     }
     else {
       t = newT;
+
+      display.clearDisplay();
+      display.setTextSize(2);
+      display.setTextColor(WHITE);
+      display.setCursor(0,0);
+      display.print("Temp:");
+      display.print(newT);
       Serial.println(t);
     }
-    // Read Humidity
-    float newH = dht.readHumidity();
-    // if humidity read failed, don't change h value 
+    float newH = dht.readHumidity(); 
     if (isnan(newH)) {
       Serial.println("Failed to read from DHT sensor!");
     }
     else {
       h = newH;
-      Serial.println(h);
+
+     display.setCursor(0,17);  
+     display.print("Humi:");
+     display.print(newH);
+     display.display();
+     Serial.println(h);
     }
   }
 }
