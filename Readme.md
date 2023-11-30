@@ -1,6 +1,6 @@
 # WeatherSense IoT Weather Station
 
-This is my Arduino-based IoT weather station project that uses an ESP8266 WiFi module to measure and display temperature and humidity readings from a DHT11 sensor. The project also includes a Oled Display and web interface for real-time monitoring of the weather data.
+WeatherSense IoT Weather Station is project that uses an ESP8266 to measure and display temperature and humidity readings from a DHT11 sensor. The project also includes a Oled Display and web interface for real-time monitoring of the weather data.
 
 ![WeatherSense](p3.jpg)
 
