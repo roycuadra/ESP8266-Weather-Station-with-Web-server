@@ -2,9 +2,10 @@
 
 WeatherSense IoT Weather Station is project that uses an ESP8266 to measure and display temperature and humidity readings from a DHT11 sensor. The project also includes a Oled Display and web interface for real-time monitoring of the weather data.
 
-![WeatherSense](p3.jpg)
+  <img src="picture2.png" alt="WeatherSense" width="500">
 
-![WeatherSense](picture2.png)
+  <img src="p3.jpg" alt="WeatherSense" width="400">
+
 
 # Features
 - With OLED Display
