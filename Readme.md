@@ -6,6 +6,13 @@ WeatherSense IoT Weather Station is project that uses an ESP8266 to measure and 
 
   <img src="p3.jpg" alt="WeatherSense" width="400">
 
+# Access Point Mode
+   
+  <img src="./p4.jpg" alt="WeatherSense" width="500">
+
+  <img src="./p5.png" alt="WeatherSense" width="500">
+  
+
 
 # Features
 - With OLED Display
