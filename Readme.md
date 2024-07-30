@@ -27,3 +27,5 @@ WeatherSense IoT Weather Station is project that uses an ESP8266 to measure and 
 - DHT11 temperature and humidity sensor
 - Arduino IDE (or compatible software)
 - USB cable for programming and power
+## License
+This project is open-source and available under the MIT License. See the [LICENSE](LICENSE) file for more details.
